@@ -1,0 +1,68 @@
+import tkinter as tk
+from tkinter import ttk
+from datetime import datetime
+
+class AppointmentGUI:
+    def __init__(self, master):
+        self.master = master
+        master.title("Appointment Manager")
+
+        # Create labels and entry fields for appointment information
+        self.date_label = tk.Label(master, text="Date (MM/DD/YYYY):")
+        self.date_label.grid(row=0, column=0, sticky="w")
+        self.date_entry = tk.Entry(master)
+        self.date_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        self.time_label = tk.Label(master, text="Time (HH:MM AM/PM):")
+        self.time_label.grid(row=1, column=0, sticky="w")
+        self.time_entry = tk.Entry(master)
+        self.time_entry.grid(row=1, column=1, padx=5, pady=5)
+
+        self.duration_label = tk.Label(master, text="Duration (in minutes):")
+        self.duration_label.grid(row=2, column=0, sticky="w")
+        self.duration_entry = tk.Entry(master)
+        self.duration_entry.grid(row=2, column=1, padx=5, pady=5)
+
+        self.notes_label = tk.Label(master, text="Notes:")
+        self.notes_label.grid(row=3, column=0, sticky="w")
+        self.notes_entry = tk.Entry(master)
+        self.notes_entry.grid(row=3, column=1, padx=5, pady=5)
+
+        # Create button to add appointment to list
+        self.add_button = ttk.Button(master, text="Add Appointment", command=self.add_appointment)
+        self.add_button.grid(row=4, column=1, pady=10)
+
+        # Create treeview to display appointments
+        self.treeview = ttk.Treeview(master)
+        self.treeview["columns"] = ("Date", "Time", "Duration", "Notes")
+        self.treeview.heading("Date", text="Date")
+        self.treeview.heading("Time", text="Time")
+        self.treeview.heading("Duration", text="Duration")
+        self.treeview.heading("Notes", text="Notes")
+        self.treeview.grid(row=5, column=0, columnspan=2, padx=5, pady=5)
+
+    def add_appointment(self):
+        # Get input values from entry fields
+        date_str = self.date_entry.get()
+        time_str = self.time_entry.get()
+        duration = int(self.duration_entry.get())
+        notes = self.notes_entry.get()
+
+        # Convert date and time strings to datetime object
+        date_obj = datetime.strptime(date_str, "%m/%d/%Y")
+        time_obj = datetime.strptime(time_str, "%I:%M %p").time()
+        datetime_obj = datetime.combine(date_obj, time_obj)
+
+        # Add appointment to treeview
+        self.treeview.insert("", "end", text=datetime_obj.strftime("%m/%d/%Y %I:%M %p"),
+                             values=(date_str, time_str, duration, notes))
+
+        # Clear entry fields
+        self.date_entry.delete(0, tk.END)
+        self.time_entry.delete(0, tk.END)
+        self.duration_entry.delete(0, tk.END)
+        self.notes_entry.delete(0, tk.END)
+
+root = tk.Tk()
+appointment_gui = AppointmentGUI(root)
+root.mainloop()
